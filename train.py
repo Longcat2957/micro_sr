@@ -144,15 +144,15 @@ def main():
         train_loss_meter.reset()
         
         # reparameterization
-        eval_net = convert_model(net)
-        eval_net = eval_net.eval()
-        
+        # eval_net = convert_model(net)
+        # eval_net = eval_net.eval()
+        net = net.eval()
         # Validation
         valid_bar = tqdm(valid_loader)
         for lr, hr in valid_bar:
             lr, hr = lr.to(DEVICE), hr.to(DEVICE)
             with torch.no_grad():
-                sr = eval_net(lr)
+                sr = net(lr)
             validation_loss = criterion(sr, hr)
 
             validation_loss_meter.update(validation_loss)
@@ -192,7 +192,7 @@ def main():
             else:
                 save_file_name = f"{e}_x{upscale_ratio}_{opt.epochs}.pth"
             save_file_name = os.path.join(SAVE_ROOT, save_file_name)
-            save_model(eval_net, save_file_name)
+            save_model(net, save_file_name)
 
         # 모델 저장 (마지막 이포크에 도달했을 경우)
         if e == opt.epochs:
@@ -213,9 +213,9 @@ def main():
             else:
                 save_file_name = f"final_x{upscale_ratio}_{opt.epochs}.pth"
             save_file_name = os.path.join(SAVE_ROOT, save_file_name)
-            save_model(eval_net, save_file_name)
+            save_model(net, save_file_name)
             
-        del eval_net
+        # del eval_net
 
 
 if __name__ == '__main__':
